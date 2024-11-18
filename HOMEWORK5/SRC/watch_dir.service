@@ -1,0 +1,10 @@
+[Unit]
+Description=Watch Directory Service
+
+[Service]
+User=bob
+WorkingDirectory=/home/bob
+ExecStart=/home/bob/watch.sh
+
+[Install]
+WantedBy=multi-user.target
