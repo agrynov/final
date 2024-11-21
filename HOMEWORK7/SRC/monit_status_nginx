@@ -1,0 +1,45 @@
+root@hostserver:/home/john# sudo monit status
+Monit 5.33.0 uptime: 0m
+
+Process 'nginx'
+  status                       OK
+  monitoring status            Monitored
+  monitoring mode              active
+  on reboot                    start
+  pid                          773
+  parent pid                   1
+  uid                          0
+  effective uid                0
+  gid                          0
+  uptime                       16h 1m
+  threads                      1
+  children                     1
+  cpu                          -
+  cpu total                    -
+  memory                       0.1% [1.5 MB]
+  memory total                 0.3% [6.0 MB]
+  security attribute           unconfined
+  filedescriptors              9 [0.9% of 1024 limit]
+  total filedescriptors        19
+  read bytes                   0 B/s [0 B total]
+  disk read bytes              0 B/s [52 kB total]
+  disk read operations         0.0 reads/s [0 reads total]
+  write bytes                  0 B/s [0 B total]
+  disk write bytes             0 B/s [0 B total]
+  disk write operations        0.0 writes/s [0 writes total]
+  port response time           1.442 ms to 127.0.0.1:80 type TCP/IP protocol HTTP
+  data collected               Thu, 21 Nov 2024 09:29:41
+
+System 'hostserver'
+  status                       OK
+  monitoring status            Monitored
+  monitoring mode              active
+  on reboot                    start
+  load average                 [0.00] [0.02] [0.00]
+  cpu                          0.0%usr 0.0%sys 0.0%nice 0.0%iowait 0.0%hardirq 0.0%softirq 0.0%steal 0.0%guest 0.0%guestnice 
+  memory usage                 256.4 MB [13.1%]
+  swap usage                   0 B [0.0%]
+  uptime                       16h 1m
+  boot time                    Wed, 20 Nov 2024 17:27:49
+  filedescriptors              1184 [0.0% of 9223372036854775807 limit]
+  data collected               Thu, 21 Nov 2024 09:29:41
