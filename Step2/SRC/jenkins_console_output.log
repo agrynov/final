@@ -1,0 +1,177 @@
+Started by user Гриньов АНдрій
+[Pipeline] Start of Pipeline
+[Pipeline] node
+Running on jenkins-worker in /home/vagrant/workspace/Step
+[Pipeline] {
+[Pipeline] withEnv
+[Pipeline] {
+[Pipeline] stage
+[Pipeline] { (Checkout)
+[Pipeline] git
+The recommended git tool is: NONE
+using credential github-creds
+Fetching changes from the remote Git repository
+ > git rev-parse --resolve-git-dir /home/vagrant/workspace/Step/.git # timeout=10
+ > git config remote.origin.url https://github.com/agrynov/step2 # timeout=10
+Fetching upstream changes from https://github.com/agrynov/step2
+ > git --version # timeout=10
+ > git --version # 'git version 2.34.1'
+using GIT_ASKPASS to set credentials 
+ > git fetch --tags --force --progress -- https://github.com/agrynov/step2 +refs/heads/*:refs/remotes/origin/* # timeout=10
+Checking out Revision c43fcc252472cd4047128c15ff85c4bd08d4f8bc (refs/remotes/origin/main)
+ > git rev-parse refs/remotes/origin/main^{commit} # timeout=10
+ > git config core.sparsecheckout # timeout=10
+Commit message: "add pakaje-lock"
+ > git checkout -f c43fcc252472cd4047128c15ff85c4bd08d4f8bc # timeout=10
+ > git branch -a -v --no-abbrev # timeout=10
+ > git branch -D main # timeout=10
+ > git checkout -b main c43fcc252472cd4047128c15ff85c4bd08d4f8bc # timeout=10
+ > git rev-list --no-walk d398b1e58f2c61d0e40384485274f734f56c0b11 # timeout=10
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Build Docker Image)
+[Pipeline] script
+[Pipeline] {
+[Pipeline] isUnix
+[Pipeline] withEnv
+[Pipeline] {
+[Pipeline] sh
++ docker build -t agrynov/step2:latest .
+DEPRECATED: The legacy builder is deprecated and will be removed in a future release.
+            Install the buildx component to build images with BuildKit:
+            https://docs.docker.com/go/buildx/
+
+Sending build context to Docker daemon  309.2kB
+
+Step 1/6 : FROM node:18
+ ---> 512bc7f93b1c
+Step 2/6 : WORKDIR /app
+ ---> Using cache
+ ---> 669f54f8aa0f
+Step 3/6 : COPY package*.json ./
+ ---> fbea134e3080
+Step 4/6 : RUN npm install --include=dev
+ ---> Running in 007ba7b03889
+[91mnpm warn deprecated inflight@1.0.6: This module is not supported, and leaks memory. Do not use it. Check out lru-cache if you want a good and tested way to coalesce async requests by a key value, which is much more comprehensive and powerful.
+[0m[91mnpm warn deprecated glob@7.2.3: Glob versions prior to v9 are no longer supported
+[0m[91mnpm warn deprecated superagent@0.21.0: Please upgrade to v9.0.0+ as we have fixed a public vulnerability with formidable dependency. Note that v9.0.0+ requires Node.js v14.18.0+. See https://github.com/ladjs/superagent/pull/1800 for insight. This project is supported and maintained by the team at Forward Email @ https://forwardemail.net
+[0m[91mnpm warn deprecated formidable@1.0.14: Please upgrade to latest, formidable@v2 or formidable@v3! Check these notes: https://bit.ly/2ZEqIau
+[0m
+added 355 packages, and audited 356 packages in 27s
+
+45 packages are looking for funding
+  run `npm fund` for details
+
+7 vulnerabilities (3 moderate, 4 high)
+
+To address all issues (including breaking changes), run:
+  npm audit fix --force
+
+Run `npm audit` for details.
+[91mnpm notice
+npm notice New major version of npm available! 10.8.2 -> 11.1.0
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v11.1.0
+npm notice To update run: npm install -g npm@11.1.0
+npm notice
+[0m ---> Removed intermediate container 007ba7b03889
+ ---> 4e821186b5a1
+Step 5/6 : COPY . .
+ ---> 3f3aacd42342
+Step 6/6 : CMD ["npm", "start"]
+ ---> Running in 238311ff640d
+ ---> Removed intermediate container 238311ff640d
+ ---> 32eb67c75a93
+Successfully built 32eb67c75a93
+Successfully tagged agrynov/step2:latest
+[Pipeline] }
+[Pipeline] // withEnv
+[Pipeline] }
+[Pipeline] // script
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Run Tests)
+[Pipeline] script
+[Pipeline] {
+[Pipeline] sh
++ docker run --rm agrynov/step2:latest npm test
+
+> app@1.0.0 test
+> jest
+
+  console.log
+    App listening
+
+      at Server.log (index.js:11:11)
+
+PASS tests/app.test.js
+  GET /
+    ✓ responds to / (831 ms)
+
+Test Suites: 1 passed, 1 total
+Tests:       1 passed, 1 total
+Snapshots:   0 total
+Time:        2.659 s
+Ran all test suites.
+[Pipeline] }
+[Pipeline] // script
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Push to Docker Hub)
+[Pipeline] withCredentials
+Masking supported pattern matches of $DOCKER_HUB_CREDENTIALS or $DOCKER_HUB_CREDENTIALS_PSW
+[Pipeline] {
+[Pipeline] sh
++ echo ****
++ docker login -u agrynovagrynov@gmail.com --password-stdin
+WARNING! Your password will be stored unencrypted in /home/vagrant/.docker/config.json.
+Configure a credential helper to remove this warning. See
+https://docs.docker.com/engine/reference/commandline/login/#credentials-store
+
+Login Succeeded
++ docker push agrynov/step2:latest
+The push refers to repository [docker.io/agrynov/step2]
+ae574530395c: Preparing
+6864915a575c: Preparing
+72978f3a8cd8: Preparing
+cb1fa00ea01b: Preparing
+f270deee6385: Preparing
+e129ba4f1574: Preparing
+780658909072: Preparing
+eae0a84b6ca2: Preparing
+4b017a36fd9c: Preparing
+20a9b386e10e: Preparing
+f8217d7865d2: Preparing
+01c9a2a5f237: Preparing
+e129ba4f1574: Waiting
+780658909072: Waiting
+eae0a84b6ca2: Waiting
+4b017a36fd9c: Waiting
+20a9b386e10e: Waiting
+f8217d7865d2: Waiting
+01c9a2a5f237: Waiting
+f270deee6385: Mounted from library/node
+cb1fa00ea01b: Pushed
+72978f3a8cd8: Pushed
+ae574530395c: Pushed
+e129ba4f1574: Mounted from library/node
+780658909072: Mounted from library/node
+eae0a84b6ca2: Mounted from library/node
+4b017a36fd9c: Mounted from library/node
+20a9b386e10e: Mounted from library/node
+f8217d7865d2: Mounted from library/node
+01c9a2a5f237: Mounted from library/node
+6864915a575c: Pushed
+latest: digest: sha256:a6f0b291c73695958ba55772443c182fccf92c9610ad8013e8b6beb1eebf930a size: 2841
+[Pipeline] }
+[Pipeline] // withCredentials
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] }
+[Pipeline] // withEnv
+[Pipeline] }
+[Pipeline] // node
+[Pipeline] End of Pipeline
+Finished: SUCCESS
