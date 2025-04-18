@@ -1,0 +1,45 @@
+---
+- name: HW example
+  hosts: web
+  become: true
+
+  tasks:
+    - name: Install docker
+      yum:
+        name: docker
+        state: present
+        update_cache: true
+
+    - name: Start and enable Docker service
+      service:
+        name: docker
+        state: started
+        enabled: true
+
+    - name: Download and install Docker Compose V2
+      get_url:
+        url: https://github.com/docker/compose/releases/download/v2.35.0/docker-compose-linux-x86_64
+        dest: /usr/local/bin/docker-compose
+        mode: "755"
+
+    - name: Pull nginx image
+      docker_image:
+        name: nginx:latest
+        source: pull
+
+    - name: Create docker compose
+      copy:
+        dest: /home/ec2-user/docker-compose.yml
+        content: |
+          services:
+            nginx:
+              image: nginx:latest
+              restart: always
+              ports: ["80:80"]
+        mode: "644"
+        owner: ec2-user
+
+    - name: Run Docker Compose
+      command: docker-compose up -d
+      args:
+        chdir: /home/ec2-user
