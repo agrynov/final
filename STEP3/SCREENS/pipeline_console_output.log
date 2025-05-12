@@ -1,0 +1,156 @@
+Started by user Гриньов
+[Pipeline] Start of Pipeline
+[Pipeline] node
+Running on worker in /home/ubuntu/workspace/sp3
+[Pipeline] {
+[Pipeline] withEnv
+[Pipeline] {
+[Pipeline] stage
+[Pipeline] { (Checkout)
+[Pipeline] git
+Selected Git installation does not exist. Using Default
+The recommended git tool is: NONE
+Warning: CredentialId "github-creds" could not be found.
+Fetching changes from the remote Git repository
+ > git rev-parse --resolve-git-dir /home/ubuntu/workspace/sp3/.git # timeout=10
+ > git config remote.origin.url https://github.com/agrynov/step2 # timeout=10
+Fetching upstream changes from https://github.com/agrynov/step2
+ > git --version # timeout=10
+ > git --version # 'git version 2.43.0'
+ > git fetch --tags --force --progress -- https://github.com/agrynov/step2 +refs/heads/*:refs/remotes/origin/* # timeout=10
+Checking out Revision 86e8b4649c6e573fa6fd65b09a81d8af1085b517 (refs/remotes/origin/main)
+Commit message: "add jenkins_console_output"
+ > git rev-parse refs/remotes/origin/main^{commit} # timeout=10
+ > git config core.sparsecheckout # timeout=10
+ > git checkout -f 86e8b4649c6e573fa6fd65b09a81d8af1085b517 # timeout=10
+ > git branch -a -v --no-abbrev # timeout=10
+ > git branch -D main # timeout=10
+ > git checkout -b main 86e8b4649c6e573fa6fd65b09a81d8af1085b517 # timeout=10
+ > git rev-list --no-walk 86e8b4649c6e573fa6fd65b09a81d8af1085b517 # timeout=10
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Build Docker Image)
+[Pipeline] script
+[Pipeline] {
+[Pipeline] isUnix
+[Pipeline] withEnv
+[Pipeline] {
+[Pipeline] sh
++ docker build -t agrynov/step2:latestSP3 .
+DEPRECATED: The legacy builder is deprecated and will be removed in a future release.
+            Install the buildx component to build images with BuildKit:
+            https://docs.docker.com/go/buildx/
+
+Sending build context to Docker daemon  346.1kB
+
+Step 1/6 : FROM node:18
+ ---> e56a6e3bc572
+Step 2/6 : WORKDIR /app
+ ---> Using cache
+ ---> 4655f1386c0d
+Step 3/6 : COPY package*.json ./
+ ---> Using cache
+ ---> db787a22268a
+Step 4/6 : RUN npm install --include=dev
+ ---> Using cache
+ ---> 6b08c1f9794b
+Step 5/6 : COPY . .
+ ---> 4c9641b8d359
+Step 6/6 : CMD ["npm", "start"]
+ ---> Running in 99dc2cfe31d4
+ ---> Removed intermediate container 99dc2cfe31d4
+ ---> f16d009852b9
+Successfully built f16d009852b9
+Successfully tagged agrynov/step2:latestSP3
+[Pipeline] }
+[Pipeline] // withEnv
+[Pipeline] }
+[Pipeline] // script
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Run Tests)
+[Pipeline] script
+[Pipeline] {
+[Pipeline] sh
++ docker run --rm agrynov/step2:latestSP3 npm test
+
+> app@1.0.0 test
+> jest
+
+  console.log
+    App listening
+
+      at Server.log (index.js:11:11)
+
+PASS tests/app.test.js
+  GET /
+    ✓ responds to / (248 ms)
+
+Test Suites: 1 passed, 1 total
+Tests:       1 passed, 1 total
+Snapshots:   0 total
+Time:        0.865 s
+Ran all test suites.
+[Pipeline] }
+[Pipeline] // script
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Push to Docker Hub)
+[Pipeline] withCredentials
+Masking supported pattern matches of $DOCKER_HUB_CREDENTIALS or $DOCKER_HUB_CREDENTIALS_PSW
+[Pipeline] {
+[Pipeline] sh
++ echo ****
++ docker login -u agrynovagrynov@gmail.com --password-stdin
+WARNING! Your password will be stored unencrypted in /home/ubuntu/.docker/config.json.
+Configure a credential helper to remove this warning. See
+https://docs.docker.com/engine/reference/commandline/login/#credentials-store
+
+Login Succeeded
++ docker push agrynov/step2:latestSP3
+The push refers to repository [docker.io/agrynov/step2]
+d5aa02ebc57e: Preparing
+bf3be7cd1ba0: Preparing
+9f57d7023fdd: Preparing
+455e5c800de1: Preparing
+4ef4dcd20f76: Preparing
+438e733c9a0c: Preparing
+f7bcf5aff5f1: Preparing
+2f3ebdcf6a27: Preparing
+bf9c09fb6f3a: Preparing
+fcbb8c0ae5d6: Preparing
+8ce3e08e661a: Preparing
+247fffb7158d: Preparing
+438e733c9a0c: Waiting
+f7bcf5aff5f1: Waiting
+2f3ebdcf6a27: Waiting
+bf9c09fb6f3a: Waiting
+fcbb8c0ae5d6: Waiting
+8ce3e08e661a: Waiting
+247fffb7158d: Waiting
+4ef4dcd20f76: Mounted from library/node
+455e5c800de1: Pushed
+d5aa02ebc57e: Pushed
+438e733c9a0c: Mounted from library/node
+9f57d7023fdd: Pushed
+2f3ebdcf6a27: Mounted from library/node
+f7bcf5aff5f1: Mounted from library/node
+bf9c09fb6f3a: Mounted from library/node
+fcbb8c0ae5d6: Mounted from library/node
+8ce3e08e661a: Mounted from library/node
+247fffb7158d: Mounted from library/node
+bf3be7cd1ba0: Pushed
+latestSP3: digest: sha256:4b70cc591bb2163a6f73eecf0e82f5917c88cc500c48d26ee6bf6fb34cdb3199 size: 2841
+[Pipeline] }
+[Pipeline] // withCredentials
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] }
+[Pipeline] // withEnv
+[Pipeline] }
+[Pipeline] // node
+[Pipeline] End of Pipeline
+Finished: SUCCESS
