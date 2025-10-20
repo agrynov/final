@@ -1,0 +1,23 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: agrynov-app-ingress
+  namespace: agrynov-app
+  labels:
+    app.kubernetes.io/name: agrynov-app
+    app.kubernetes.io/part-of: step-final
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: app.agrynov.devops7.test-danit.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: agrynov-app-service
+            port:
+              number: 80
